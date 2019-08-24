@@ -1,0 +1,51 @@
+.outerContainer {
+    background-color: #eeeeee;
+    width: 400px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+    animation: fadein 2s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.timer {
+    position: relative;
+    top: -180px;
+    font-size: 35px;
+}
+
+.button {
+    border: 1.5px solid #3a4750;
+    border-radius: 2px;
+    padding: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
+
+    transition: all .2s ease-in-out;
+}
+
+.button:hover {
+    transform: scale(1.1);
+}
+
+.selector {
+    padding: 30px;
+}
+
+.header {
+    width: calc(100% - 30px);
+    font-size: 30px;
+    text-align: center;
+    padding-top: 20px;
+}

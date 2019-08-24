@@ -1,0 +1,53 @@
+.innerContainer {
+    font-size: 18px;
+    color: hsl(0, 0%, 70%);
+
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.innerContainer:hover {
+    color: white;
+    
+}
+
+.outerContainer {
+    background-color: #303841;
+    width: 200px;
+    height: 100%;
+    padding-left: 20px;
+
+}
+
+
+.outerFileList {
+    display: flex;
+    flex-direction: column;
+}
+
+.buttonContainer {
+    border-top: 1px solid hsl(0, 0%, 70%);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
+
+
+    color: hsl(0, 0%, 70%);
+    font-size: 19px;
+    text-align: center;
+
+    line-height: 30px;
+
+    margin-top: 10px;
+    margin-left: -20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    height: 30px;
+    width: 220px;
+
+    transition: font-size .2s ease-in-out;
+}
+
+.buttonContainer:hover {
+    color: white;
+    font-size: 22px;
+}

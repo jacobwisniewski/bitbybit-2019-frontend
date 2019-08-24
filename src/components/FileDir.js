@@ -1,9 +1,5 @@
 import React, { Component } from 'react'
-// import { definedStyles } from '../App.js'
-
-const fileStyle = {
-    // color: definedStyles.textColour
-}
+import styles from './FileDir.module.css'
 
 class File extends Component {
     // This is a callback function that returns the filename to the parent
@@ -12,40 +8,53 @@ class File extends Component {
     }
 
     render() {
-        const { name } = this.props  
+        const { active, name } = this.props 
 
         return( 
-            <li style={fileStyle} onClick={this.onButtonPress.bind(this)}>
+            <div className={styles.innerContainer} style={active ? {color: 'white', fontSize: '19px'} : {}} onClick={this.onButtonPress.bind(this)}>
                 {name}
-            </li>
+            </div>
         )  
     }
 }
 
-const outerFileDirStyle = {
-    // backgroundColor: definedStyles.background,
-    width: '300px',
-    textColour: 'white'
-}
 
 class FileDir extends Component {
     constructor() {
         super();
         this.state = {
-            files: [
-                { name: 'File 1' },
-                { name: 'File 2' },
-                { name: 'File 3' }
-            ],
+            isLoaded: false,
+            files: [],
             currentFileOpen: undefined
         }
+
+        this.addNewFile = this.addNewFile.bind(this)
+    }
+
+    componentDidMount() {
+        fetch('https://note-by-note.herokuapp.com/ls')
+            .then(res => res.json())
+            .then((result) => {
+                    this.setState({
+                        isLoaded: true,
+                        files: result.filenames,
+                    })
+
+            },
+            (error) => {
+                this.setState({
+                    isLoaded: true,
+                    error
+                })
+            })
     }
 
     fileList = () => this.state.files.map((file) => 
         <File 
-            name={file.name} 
+            name={file} 
             onPress={this.changeFileState.bind(this)} 
-            key={file.name}
+            active={file === this.state.currentFileOpen ? true : false}
+            key={file}
         />
     )
 
@@ -56,19 +65,43 @@ class FileDir extends Component {
         this.props.callbackCurrentFile(message)
     }
 
-    componentDidMount() {
+    addNewFile() {
+        const filename = window.prompt("What is the file name:")
+        if (filename === null) {
+            return;
+        }
+        fetch("https://note-by-note.herokuapp.com/file/" + filename, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({
+                content: ""
+            })
+        })
+        .then(response => {
+            this.setState(prevState => ({
+                files: [...prevState.files, filename]
+            }))
+        })
     }
+
 
     render() {
         return (
-            <div style={outerFileDirStyle}>
-                <div>File directory</div>
-                <ul>
+            <div className={styles.outerContainer}>
+                {this.state.isLoaded ? 
+                <div className={styles.outerFileList}>
                     {this.fileList()}
-                </ul>
+                </div> : null }
+                <div className={styles.buttonContainer} onClick={this.addNewFile}>
+                    New File
+                </div>
             </div>
         )
     }
 }
 
-export default FileDir;
+export default FileDir

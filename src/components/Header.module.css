@@ -1,0 +1,10 @@
+.outerContainer {
+    display: flex;
+    flex-direction: row;
+
+    height: 50px;
+
+    background-color: #152a38;
+}
+
+

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import FileDir from './FileDir'
 import Writing from './Writing'
+import styles from './Note.module.css'
 
 class Note extends Component {
     constructor() {
@@ -19,7 +20,7 @@ class Note extends Component {
 
     render() {
         return (
-            <div>
+            <div className={styles.outerContainer}>
                 <FileDir callbackCurrentFile={this.callbackCurrentFile}/>
                 <Writing file={this.state.currentFileOpen} />
             </div>
