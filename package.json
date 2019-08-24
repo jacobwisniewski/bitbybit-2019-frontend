@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "firebase-tools": "^7.2.4",
     "frappe-charts": "^1.2.4",
     "i": "^0.3.6",
     "immutable": "^4.0.0-rc.12",

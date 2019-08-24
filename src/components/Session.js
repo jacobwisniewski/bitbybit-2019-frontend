@@ -47,6 +47,31 @@ class ActiveSession extends Component {
         super();
         this.sessionEnd = this.sessionEnd.bind(this)
         this.sessionBreak = this.sessionBreak.bind(this)
+
+        this.state = {
+            isLoaded: false,
+            graphData: undefined
+        }
+    }
+
+    componentDidMount() {
+        this.getGraphData()
+        this.graphLoop = setInterval(this.getGraphData, 10 * 1000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.graphLoop)
+    }
+
+    getGraphData = () => {
+        fetch("http://note-by-note.herokuapp.com/activity")
+        .then(res => res.json())
+        .then(result => {
+            this.setState({
+                isLoaded: true,
+                graphData: result.data
+            })
+        })
     }
 
     sessionEnd() {
@@ -89,6 +114,7 @@ class ActiveSession extends Component {
                     <div className={styles.smallButton} onClick={this.sessionBreak}>5  min break</div>
                 </div>
                 <div className={styles.activity} style={{color: activity === 'none' ? 'red' : activity === 'low' ? 'orange' : activity === 'medium' ? '#E9E43E' : 'green' }}>Your activity: {this.props.activity}</div>
+                {this.state.isLoaded ? <img className={styles.graph} src={`data:image/jpeg;base64,${this.state.graphData}`}/> : null}
             </div>
         )
     }
@@ -112,7 +138,7 @@ class NoActiveSession extends Component {
     }
 
     startSession() {
-        socket.emit('start_session', {duration: this.state.setTime * 60 * 60})
+        socket.emit('start_session', {duration: this.state.setTime * 60 * 60 * 2})
         this.props.callbackSessionState(this.state.setTime * 60 * 60 * 2)
     }
 
@@ -155,7 +181,8 @@ class Session extends Component {
 
     componentDidMount() {
         socket.on('activity', (result) => {this.setState({activity: result})})
-        // socket.on('break', (value) => this.stopTimer() )
+        socket.on('break', (value) => this.callbackSessionBreak(value.duration))
+        socket.on('end_session', () => this.callbackSessionEnd())
     }
 
     callbackSessionBreak = (time) => {
