@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Editor } from 'slate-react';
-
 import Plain from 'slate-plain-serializer'
 import styles from './Writing.module.css'
 import { socket } from '../App'
