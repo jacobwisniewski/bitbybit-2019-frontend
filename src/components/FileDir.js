@@ -49,14 +49,14 @@ class FileDir extends Component {
             })
     }
 
-    fileList = () => this.state.files.map((file) => 
+    fileList = () => {return this.state.files.length !== 0 ? this.state.files.map((file) => 
         <File 
             name={file} 
             onPress={this.changeFileState.bind(this)} 
             active={file === this.state.currentFileOpen ? true : false}
             key={file}
         />
-    )
+    ) : <div className={styles.sadMessage}>No files :(</div>}
 
     changeFileState(message) {
         this.setState({
@@ -78,7 +78,7 @@ class FileDir extends Component {
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: JSON.stringify({
-                content: ""
+                content: "Hey you made a new file!"
             })
         })
         .then(response => {
@@ -92,6 +92,7 @@ class FileDir extends Component {
     render() {
         return (
             <div className={styles.outerContainer}>
+                <div className={styles.fileHeader}>FILES</div>
                 {this.state.isLoaded ? 
                 <div className={styles.outerFileList}>
                     {this.fileList()}

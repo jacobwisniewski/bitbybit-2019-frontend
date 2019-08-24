@@ -9,6 +9,7 @@ import {
 } from 'react-circular-input'
 import { Spring } from 'react-spring/renderprops'
 
+
 const getTimeString = (seconds) => {
     const date = new Date(null);
     date.setSeconds(seconds); 
@@ -16,7 +17,7 @@ const getTimeString = (seconds) => {
 }
 
 function CircularSelector(props) {
-        const [value, setValue] = useState(0.25)
+        const [value, setValue] = useState(0.05)
 
         function changeValue(value) {
             setValue(value + 1 > 1 ? value : value + 1)
@@ -54,28 +55,40 @@ class ActiveSession extends Component {
     }
 
     sessionBreak() {
-        socket.emit('break', {duration: 10})
-        this.props.callbackSessionBreak(10)
+        if (!this.props.break) {
+            socket.emit('break', {duration: 20})
+            this.props.callbackSessionBreak(20)
+            
+        }
+     
     }
+
+
     render() {
+        const { activity } = this.props
         return (
             <div className={styles.outerContainer}>  
                 <div className={styles.header}>Active Session</div>
                 <div className={styles.selector}>
-                <CircularInput 
-                    value={this.props.timeLeft / this.props.sessionTime } 
-                    radius={130}
-                >
-                    <CircularTrack strokeWidth={40} />
-                    <CircularProgress strokeWidth={40} stroke="#00adb5" strokeLinecap="butt"/>
-                </CircularInput>
+                    <Spring from={{value: 1}} to={{value: 0}} config={{duration: this.props.timeLeft * 1000}} key={this.props.sessionTime}>
+                        { props => (
+                            <CircularInput 
+                                value={props.value} 
+                                radius={130}
+                            >
+                                <CircularTrack strokeWidth={40} />
+                                <CircularProgress strokeWidth={40} stroke="#00adb5" strokeLinecap="butt"/>
+                            </CircularInput>
+                        )}
+                    </Spring>
+                
                 </div>
                 <div className={styles.timer}>{getTimeString(this.props.timeLeft)}</div>
-                <div>
-                    <div className={styles.button} onClick={this.sessionEnd}>Session end</div>
-                    <div className={styles.button} onClick={this.sessionBreak}>5min break</div>
+                <div className={styles.buttContainer}>
+                    <div className={styles.smallButton} onClick={this.sessionEnd}>Session end</div>
+                    <div className={styles.smallButton} onClick={this.sessionBreak}>5  min break</div>
                 </div>
-                <div>{this.props.activity}</div>
+                <div className={styles.activity} style={{color: activity === 'none' ? 'red' : activity === 'low' ? 'orange' : activity === 'medium' ? '#E9E43E' : 'green' }}>Your activity: {this.props.activity}</div>
             </div>
         )
     }
@@ -85,7 +98,7 @@ class NoActiveSession extends Component {
     constructor() {
         super();
         this.state = {
-            setTime: 0.25
+            setTime: 0.05
         }
 
         this.callbackSetTime = this.callbackSetTime.bind(this)
@@ -129,27 +142,28 @@ class Session extends Component {
             setTime: 0,
             activity: 'low',
             timeLeft: 0,
-            breakTime: 0
+            breakTime: 0,
+            breakLength: 0,
         }
 
         this.callbackSessionState = this.callbackSessionState.bind(this)
         this.countDown = this.countdown.bind(this)   
+        this.breakCountdown = this.breakCountdown.bind(this)
         this.callbackSessionEnd = this.callbackSessionEnd.bind(this) 
         this.callbackSessionBreak = this.callbackSessionBreak.bind(this)
     }
 
     componentDidMount() {
-        socket.on('end_session', () => this.callbackSessionEnd())
-        socket.on('activity', (result) => {
-            console.log(result)
-            this.setState({activity: result})})
-        socket.on('break', (value) => this.stopTimer() )
+        socket.on('activity', (result) => {this.setState({activity: result})})
+        // socket.on('break', (value) => this.stopTimer() )
     }
 
     callbackSessionBreak = (time) => {
         this.setState({
             breakTime: time,
-            activeBreak: true
+            activeBreak: true,
+            breakLength: time,
+            reset: true
         })
         clearInterval(this.timer)
         this.breakTimer = setInterval(this.breakCountdown, 1000)
@@ -158,9 +172,16 @@ class Session extends Component {
     callbackSessionEnd = () => {
         this.setState({
             activeSession: false,
-            timeLeft: 0
+            activeBreak: false,
+            sessionTime: 0,
+            setTime: 0,
+            activity: 'low',
+            timeLeft: 0,
+            breakTime: 0,
+            breakLength: 0,
         })
         // End the countdown
+        clearInterval(this.breakTimer)
         clearInterval(this.timer)
     }
 
@@ -185,7 +206,7 @@ class Session extends Component {
 
     breakCountdown = () => {
         if (this.state.breakTime <= 0) {
-            this.setState({breakTime: 0})
+            this.setState({breakTime: 0, activeBreak: false, sessionTime: this.state.timeLeft})
             clearInterval(this.breakTimer)
             this.timer = setInterval(this.countdown, 1000)
         } else {
@@ -200,10 +221,10 @@ class Session extends Component {
             <div className={styles.outerContainer}>
                 {activeSession ?    
                 <ActiveSession 
-                    break={this.state.break}
+                    break={this.state.activeBreak}
                     activity={this.state.activity}
-                    timeLeft={this.state.timeLeft} 
-                    sessionTime={this.state.sessionTime}
+                    timeLeft={this.state.activeBreak ? this.state.breakTime : this.state.timeLeft} 
+                    sessionTime={this.state.activeBreak ? this.state.breakLength : this.state.sessionTime}
                     callbackSessionEnd={this.callbackSessionEnd} 
                     callbackSessionBreak={this.callbackSessionBreak}
                 />

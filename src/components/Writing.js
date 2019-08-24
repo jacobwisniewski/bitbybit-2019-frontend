@@ -68,7 +68,6 @@ class Writing extends Component {
                 })
                 this.loadData()
             } else {
-                console.log('test')
                 this.loadData(this.props.file)
             }
         }
@@ -76,7 +75,6 @@ class Writing extends Component {
 
     
     onChange = ({ value }) => {
-        console.log(value)
         if (value.document !== this.state.value.document) {
             socket.emit('text', {'text': Plain.serialize(value)})
         }
@@ -88,12 +86,21 @@ class Writing extends Component {
         const { value, isLoaded } = this.state
         return (
             <div className={styles.outerContainer}>
+                <div className={styles.button} onClick={this.saveData}>Save</div>
                 { value !== undefined && isLoaded ? 
                 <div>
-                    <Editor className={styles.editor} value={this.state.value} onChange={this.onChange} /> 
-                    <button onClick={this.saveData}>Save</button>
+
+                    <Editor 
+                        className={styles.editor} 
+                        value={this.state.value} 
+                        onChange={this.onChange} 
+                        autoFocus={true} 
+                        spellCheck={true}
+                        tabIndex={true}
+                        autoCorrect={true}
+                    /> 
                 </div>
-                : null }
+                : <div className={styles.helpfulMessage}>Try create a file or open an existing one!</div> }
             </div>
         )
     }

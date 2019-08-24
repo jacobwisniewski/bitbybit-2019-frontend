@@ -6,7 +6,7 @@ class Header extends Component {
     render() {
         return (
             <div className={styles.outerContainer}>
-                <div>
+                <div className={styles.header}>
                     Note-by-Note
                 </div>
             </div>

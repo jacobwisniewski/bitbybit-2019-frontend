@@ -19,6 +19,12 @@
     flex-direction: row;
 }
 
+.activity {
+    font-size: 20px;
+    padding-top: 20px;
+
+}
+
 .timer {
     position: relative;
     top: -180px;
@@ -48,4 +54,27 @@
     font-size: 30px;
     text-align: center;
     padding-top: 20px;
+}
+
+.buttContainer{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+
+    
+}
+
+.smallButton {
+    border: 1.5px solid #3a4750;
+    border-radius: 2px;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    transition: all .2s ease-in-out;
+}
+
+.smallButton:hover {
+    transform: scale(1.1);
 }
