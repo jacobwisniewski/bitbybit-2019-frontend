@@ -81,8 +81,8 @@ class ActiveSession extends Component {
 
     sessionBreak() {
         if (!this.props.break) {
-            socket.emit('break', {duration: 20})
-            this.props.callbackSessionBreak(20)
+            socket.emit('break', {duration: 60})
+            this.props.callbackSessionBreak(60)
             
         }
      
@@ -111,9 +111,10 @@ class ActiveSession extends Component {
                 <div className={styles.timer}>{getTimeString(this.props.timeLeft)}</div>
                 <div className={styles.buttContainer}>
                     <div className={styles.smallButton} onClick={this.sessionEnd}>Session end</div>
-                    <div className={styles.smallButton} onClick={this.sessionBreak}>5  min break</div>
+                    <div className={styles.smallButton} onClick={this.sessionBreak}>1  min break</div>
                 </div>
                 <div className={styles.activity} style={{color: activity === 'none' ? 'red' : activity === 'low' ? 'orange' : activity === 'medium' ? '#E9E43E' : 'green' }}>Your activity: {this.props.activity}</div>
+                {this.props.activity === "none" ? <div className={styles.activity}>Get back to work!</div> : null}
                 {this.state.isLoaded ? <img className={styles.graph} src={`data:image/jpeg;base64,${this.state.graphData}`}/> : null}
             </div>
         )

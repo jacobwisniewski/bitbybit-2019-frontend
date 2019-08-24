@@ -50,6 +50,18 @@ class Writing extends Component {
         if (this.props.file !== undefined) {
             this.loadData(this.props.file)
         }
+        this.messageEmit = setInterval(this.messageEmit, 1000)
+    }
+
+    messageEmit = () => {
+        if (this.state.value !== undefined) {
+            console.log('yeet')
+            socket.emit('text', {'text': Plain.serialize(this.state.value)})
+        }
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.messageEmit)
     }
 
     componentDidUpdate(prevProps) {
@@ -75,9 +87,7 @@ class Writing extends Component {
 
     
     onChange = ({ value }) => {
-        if (value.document !== this.state.value.document) {
-            socket.emit('text', {'text': Plain.serialize(value)})
-        }
+        socket.emit('text', {'text': Plain.serialize(value)})
         this.setState({ value })
     }
 
