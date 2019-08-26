@@ -55,7 +55,6 @@ class Writing extends Component {
 
     messageEmit = () => {
         if (this.state.value !== undefined) {
-            console.log('yeet')
             socket.emit('text', {'text': Plain.serialize(this.state.value)})
         }
     }

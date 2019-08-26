@@ -187,6 +187,7 @@ class Session extends Component {
     }
 
     callbackSessionBreak = (time) => {
+        console.log('sessionbreak')
         this.setState({
             breakTime: time,
             activeBreak: true,
@@ -198,6 +199,7 @@ class Session extends Component {
     }
 
     callbackSessionEnd = () => {
+        console.log('endsession')
         this.setState({
             activeSession: false,
             activeBreak: false,

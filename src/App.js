@@ -8,11 +8,6 @@ import Header from './components/Header'
 export const socket = io('http://bitbybit-2019.herokuapp.com')
 
 class App extends Component {
-    componentDidMount() {
-            socket.emit('text', {text: 'This is a text message'})
-            socket.on('activity', (data) => console.log(data))
-    }
-
     render() {
         return (
             <div className={styles.outerContainer}>
